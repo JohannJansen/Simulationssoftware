@@ -1,0 +1,36 @@
+Welche Kräfte wirken auf das Objekt?
+Wie hoch ist die Anziehungskraft auf den Ball?
+Wie hoch ist die Masse des Balls?
+Aus welchem Material besteht der Ball?
+Auf welcher Oberfläche trifft der Ball auf? (Wie gut wird der Stoß abgefangen?)
+Wie ist die Oberflächenbeschaffenheit vom Ball und der Oberfläche?
+In welchem Medium findet die Bewegung statt?
+In welchem zeitlichen Rahmen wird das Objekt betrachtet?
+Wie viel kinezische Energie wirkt initial auf das fallende Objekt?
+Wie viele Objekte befinden sich im Raum?
+
+Welches Mathematische/Kinematische Konzept kann die Bewegung des Objekts im Raum möglichst genau approximieren?
+Welche Berechnungskomplexität besitzt das mathematische Modell?
+Wie sind die Grenzen des Modells?
+Wie genau kann approximiert werden wenn ein zeitlicher Rahmen gegeben ist? (60 fps Animation)
+Nach welchem Zeitfenster muss die Simulation vollständig berechnet sein?
+Welche Genauigkeit ist in dem gefragten Kontext zur Abbildung der Bewegung notwendig?
+Welche Visualisierungsform ist für die Darstellung geeignet?
+Welcher Dresscode bietet sich für die Darstellung der Ergebnisse an?
+
+Hausaufgabe:
+1. Beschreibung des Problems. Max 0,5 Seiten Was soll simuliert werden?
+2. Beschreibung des Models: Max 2 Seiten Wie sieht das Modell eines fallenden Objekts aus?
+
+Randbedingungen:
+-Höhe reicht initial
+-Rotation nicht relevant
+-Luftwiederstand anfangs nicht notwendig
+-Gerade Ebene beim Aufprall
+-Form und Fall des Balls sind perfekt
+-Wir befinden uns auf der Erde
+-Klang nicht mit eingeschlossen
+-Trajektorie
+ 
+
+
