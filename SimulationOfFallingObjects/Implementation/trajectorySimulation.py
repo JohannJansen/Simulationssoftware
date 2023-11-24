@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 y0 = 2
 v0 = 0
 g = 9.81
-deltaT = 0.01
+deltaT = 0.1
 e = 0.8
 r = 0
 yTable = 0
@@ -13,7 +13,7 @@ endTime = 10.0
 currentTime = 0
 totalTime = 0
 numBounces = 0
-maxBounces = 5
+maxBounces = 100
 
 # defining functions
 exact = lambda t : y0 + v0 * t + 0.5 * -g * pow(t,2)
