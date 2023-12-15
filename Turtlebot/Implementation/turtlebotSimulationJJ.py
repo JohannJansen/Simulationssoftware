@@ -28,47 +28,58 @@ class TurtleBot:
 
         # case 3
         if self.omega1 == 0 and self.omega2 != 0 or self.omega2 == 0 and self.omega1 != 0:
-            if self.omega1 == 0:
-                alpha = 1 / WHEELBASE * WHEELRADIUS * self.omega2 * deltaT
-            else:
-                alpha = 1 / WHEELBASE * WHEELRADIUS * self.omega1 * deltaT
+            self.rorateAroundOneWheel(deltaT)
+
+        # case 2
+        elif self.omega1 == -self.omega2 or self.omega2 == -self.omega1:
+            self.rotateAroundBotCenter(deltaT)
+
+        # case 4/5/6
+        elif 0 != self.omega1 != self.omega2 != 0:
+            self.rorateAroundPointOutsideOfBot(deltaT)
+
+        # case 1
+        elif self.omega1 == self.omega2:
+            self.driveStraight(deltaT)
+
+    def rorateAroundOneWheel(self, deltaT):
+        if self.omega1 == 0:
+            alpha = 1 / WHEELBASE * WHEELRADIUS * self.omega2 * deltaT
+        else:
+            alpha = 1 / WHEELBASE * WHEELRADIUS * self.omega1 * deltaT
             rotationCenter = self.wheelposition1() if self.omega1 == 0 else self.wheelposition2()
             rotationMatrix = createRotationMatrix(-alpha)
             self.posCenter = np.matmul(rotationMatrix, (self.posCenter - rotationCenter)) + rotationCenter
             self.botNormal = normalizeVector2d(np.matmul(rotationMatrix, self.botNormal))
 
-        # case 2
-        elif self.omega1 == -self.omega2 or self.omega2 == -self.omega1:
-            if self.omega1 < 0:
-                alpha = 2 / WHEELBASE * WHEELRADIUS * self.omega2 * deltaT
-            else:
-                alpha = 2 / WHEELBASE * WHEELRADIUS * self.omega1 * deltaT
-            self.botNormal = np.matmul(createRotationMatrix(-alpha), self.botNormal)
+    def rotateAroundBotCenter(self, deltaT):
+        if self.omega1 < 0:
+            alpha = 2 / WHEELBASE * WHEELRADIUS * self.omega2 * deltaT
+        else:
+            alpha = 2 / WHEELBASE * WHEELRADIUS * self.omega1 * deltaT
+        self.botNormal = np.matmul(createRotationMatrix(-alpha), self.botNormal)
 
-        # case 4/5/6
-        elif 0 != self.omega1 != self.omega2 != 0:
-            if self.omega1 > self.omega2:  # turn clockwise
-                alpha = WHEELRADIUS / WHEELBASE * deltaT * (self.omega1 - self.omega2)
-                dist = WHEELRADIUS * self.omega2 * deltaT
-                distToRotationCenter = dist / alpha
-                rotationCenter = self.posCenter + np.matmul(createRotationMatrix(-math.pi / 2.0), self.botNormal) * (
-                        WHEELBASE / 2.0 + distToRotationCenter)
-            else:  # turn counterclockwise
-                alpha = WHEELRADIUS / WHEELBASE * deltaT * (self.omega2 - self.omega1)
-                dist = WHEELRADIUS * self.omega1 * deltaT
-                distToRotationCenter = dist / alpha
-                rotationCenter = self.posCenter + np.matmul(createRotationMatrix(math.pi / 2.0), self.botNormal) * (
-                        WHEELBASE / 2.0 + distToRotationCenter)
-            rotationMatrix = createRotationMatrix(-alpha)
-
-            self.posCenter = np.matmul(rotationMatrix, (self.posCenter - rotationCenter)) + rotationCenter
-            self.botNormal = normalizeVector2d(np.matmul(rotationMatrix, self.botNormal))
-
-        # case 1
-        elif self.omega1 == self.omega2:
+    def rorateAroundPointOutsideOfBot(self, deltaT):
+        if self.omega1 > self.omega2:  # turn clockwise
+            alpha = WHEELRADIUS / WHEELBASE * deltaT * (self.omega1 - self.omega2)
+            dist = WHEELRADIUS * self.omega2 * deltaT
+            distToRotationCenter = dist / alpha
+            rotationCenter = self.posCenter + np.matmul(createRotationMatrix(-math.pi / 2.0), self.botNormal) * (
+                    WHEELBASE / 2.0 + distToRotationCenter)
+        else:  # turn counterclockwise
+            alpha = WHEELRADIUS / WHEELBASE * deltaT * (self.omega2 - self.omega1)
             dist = WHEELRADIUS * self.omega1 * deltaT
-            self.posCenter += dist
+            distToRotationCenter = dist / alpha
+            rotationCenter = self.posCenter + np.matmul(createRotationMatrix(math.pi / 2.0), self.botNormal) * (
+                    WHEELBASE / 2.0 + distToRotationCenter)
+        rotationMatrix = createRotationMatrix(-alpha)
 
+        self.posCenter = np.matmul(rotationMatrix, (self.posCenter - rotationCenter)) + rotationCenter
+        self.botNormal = normalizeVector2d(np.matmul(rotationMatrix, self.botNormal))
+
+    def driveStraight(self, deltaT):
+        dist = WHEELRADIUS * self.omega1 * deltaT
+        self.posCenter += dist
 
 def createRotationMatrix(angle):
     return [[math.cos(angle), -math.sin(angle)],
