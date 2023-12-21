@@ -4,7 +4,7 @@ from Gate import Gate, create_or_gate, create_end_gate, create_and_gate, create_
 from Input import create_input
 import matplotlib.pyplot as plt
 
-def plotdata(deltaT, totaltime, element):
+def plotdata(deltaT, totaltime, element, title):
     values = []
     times = []
     iterations = 0
@@ -22,13 +22,12 @@ def plotdata(deltaT, totaltime, element):
 
     plt.figure(figsize=(12, 8))
     plt.plot(times, values, 'bo--', label='Voltage')
-    plt.title('Outputs in respect to time')
+    plt.title(title)
     plt.xlabel('t')
     plt.ylabel('output')
     plt.grid()
     plt.legend(loc='lower right')
-    # plt.savefig('FallingBallSimulation{t}DeltaT.png'.format(t=STEPDISTANCE))
-    plt.show()
+    plt.savefig('{t}.png'.format(t=title))
 
 
 if __name__ == '__main__':
@@ -38,7 +37,6 @@ if __name__ == '__main__':
     inputB = create_input()
     inputC = create_input()
     inputD = create_input()
-
     # gates
     gateG1 = create_or_gate()
     gateG2 = create_not_gate()
@@ -99,10 +97,5 @@ if __name__ == '__main__':
         eventmanager.queue.remove(event)
         eventmanager.execute_event(event)
 
-    # print(*inputA.output_log, sep="\n")
-    # print(*inputB.output_log, sep="\n")
-    # print(*gateG1.output_log, sep="\n")
-    print(*gateOut.output_log, sep="\n")
-
-    plotdata(30, 1000, gateOut)
+    plotdata(30, 1000, inputD, 'InputDOutputData')
 
