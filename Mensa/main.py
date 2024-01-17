@@ -47,21 +47,21 @@ if __name__ == '__main__':
     end = create_final_station("ende", 0, 0, collector)
     end_gate = create_probability_gate([end], [100])
 
-    k1 = create_station("BarKasse1", 10, 2, end_gate)
-    k2 = create_station("BarKasse2", 15, 5, end_gate)
-    k3 = create_station("KartenKasse", 10, 1, end_gate)
+    k1 = create_station("BarKasse1", 25, 5, end_gate)
+    k2 = create_station("BarKasse2", 30, 10, end_gate)
+    k3 = create_station("KartenKasse", 30, 15, end_gate)
     cash_point_gate = create_distributor_gate([k1, k2])
     card_gate = create_probability_gate([cash_point_gate, k3], [80, 20])
 
-    dessert_station = create_station("Dessert", 15, 5, card_gate)
+    dessert_station = create_station("Dessert", 10, 5, card_gate)
     dessert_gate = create_probability_gate([card_gate, dessert_station], [5, 95])
 
-    e1 = create_station("Essen1", 10, 2, dessert_gate)
-    e2 = create_station("Essen2", 15, 3, dessert_gate)
-    e3 = create_station("Essen3", 20, 1, dessert_gate)
+    e1 = create_station("Essen1", 30, 10, dessert_gate)
+    e2 = create_station("Essen2", 60, 20, dessert_gate)
+    e3 = create_station("Essen3", 60, 5, dessert_gate)
     e4 = create_station("Essen4", 20, 10, dessert_gate)
     # TODO Tafelbild abgleich
-    meal_gate = create_probability_gate([e1, e2, e3, e4, dessert_gate], [40, 25, 20, 10, 5])
+    meal_gate = create_probability_gate([e1, e2, e3, e4, dessert_gate], [10, 25, 25, 35, 5])
 
     start_gate = create_station("Eingang", 0, 0, meal_gate)
 
@@ -75,3 +75,23 @@ if __name__ == '__main__':
     print(len(collector))
     for student in collector:
         print(display_in_minutes(student.station_timestamps["ende"] - student.entrytime))
+
+    # split students into minutes
+    studentlists_per_minute = []
+    for i in range(120):
+        sublist_for_minute = [student for student in students if student.entrytime // 60 is i]
+        studentlists_per_minute.append(sublist_for_minute)
+
+    # calculate average wait time per minute
+    average_wait_time = []
+    for minutelist in studentlists_per_minute:
+        if len(minutelist) > 0:
+            sum = 0
+            for student in minutelist:
+                sum += student.entrytime
+            result = sum / len(minutelist)
+            average_wait_time.append(result)
+        else:
+            average_wait_time.append(0)
+
+    print(average_wait_time)
