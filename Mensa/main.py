@@ -1,5 +1,6 @@
 import csv
 import Student
+import matplotlib.pyplot as plt
 from ChoiceGate import ChoiceGate, create_probability_gate, create_distributor_gate
 from Event import create_add_event
 from EventManager import EventManager
@@ -30,18 +31,9 @@ def display_in_minutes(time):
     return "{minutes}:{seconds}".format(minutes=minutes, seconds=seconds)
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    students = import_student_csv("EntryTimes/normal_linksseitig.csv")
+    students = import_student_csv("EntryTimes/triangular.csv")
     eventmanager = EventManager()
-
-    # start => e1,e2,e3,e4,NachtischEntscheidung
-    # e1-e4 => NachtischEntscheidung
-    # NachtischEntscheidung => Kassenentscheidung, Nachtisch
-    # Nachtisch => Kassenentscheidung
-    # Kassenentscheidung => Kartenkasse, NormaleKassenEntscheidung
-    # NormaleKassenentscheidung => k1,k2
-    # k1,k2 => Ende
 
     collector = []
     end = create_final_station("ende", 0, 0, collector)
@@ -60,7 +52,7 @@ if __name__ == '__main__':
     e2 = create_station("Essen2", 15, 3, dessert_gate)
     e3 = create_station("Essen3", 20, 1, dessert_gate)
     e4 = create_station("Essen4", 20, 10, dessert_gate)
-    # TODO Tafelbild abgleich
+    
     meal_gate = create_probability_gate([e1, e2, e3, e4, dessert_gate], [40, 25, 20, 10, 5])
 
     start_gate = create_station("Eingang", 0, 0, meal_gate)
@@ -72,6 +64,34 @@ if __name__ == '__main__':
     while len(eventmanager.queue) > 0:
         eventmanager.execute_event(eventmanager.queue.pop(0))
 
-    print(len(collector))
-    for student in collector:
-        print(display_in_minutes(student.station_timestamps["ende"] - student.entrytime))
+    students_per_minute = []
+    for i in range(120):
+        minute_list = [student for student in students if student.entrytime // 60 == i]
+        students_per_minute.append(minute_list)
+
+    avg_duration_per_minute = []
+    for minute_list in students_per_minute:
+        sum = 0
+        if len(minute_list) > 0:
+            for student in minute_list:
+                sum += student.station_timestamps["ende"] - student.entrytime
+            sum = sum / len(minute_list) // 60
+        avg_duration_per_minute.append(sum)
+    
+    print(len(students_per_minute))
+
+    minutes = []
+    for minute in range(120):
+        minutes.append(minute)
+
+    datadistribution = "triangular"
+    experiment = "avg_duration_per_minute"
+    plt.figure(figsize = (12, 8))
+    plt.plot(minutes, avg_duration_per_minute, 'bo--', label=experiment)
+    plt.title('Average wait time per minute')
+    plt.xlabel('minutes')
+    plt.ylabel('seconds')
+    plt.grid()
+    plt.legend(loc='lower right')
+    plt.savefig('{experiment}_{datadistribution}.png'.format(experiment=experiment, datadistribution=datadistribution))
+    plt.show()
