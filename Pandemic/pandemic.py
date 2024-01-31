@@ -9,16 +9,17 @@ import matplotlib.pyplot as plt
 
 ZONEHEIGHT = 100
 ZONEWIDTH = 100
-NUMPEOPLE = 200
+NUMPEOPLE = 20
 INFECTIONDURATION = 100
 INFECTIONRADIUS = 5
 INFECTIONCHANCE = 0.2
 MAXMOVESPEED = 2
-INITIALINFECTED = 10
+INITIALINFECTED = 3
 INFECTEDTOFOLLOWINGCHANCE = 0.005
 FATALITYRATE = 0.02
 NOIMMINUTYCHANCE = 0.1
-SOCIALDISTANCING = True
+SOCIALDISTANCING = False
+QUARANTINE = False
 
 
 class State(Enum):
@@ -45,11 +46,11 @@ class Person:
             # roll chance for infection turning into symptoms or
             # quarantine each with 50% of happening if the 0.5% is rolled
             chance = random.random()
-            if chance < INFECTEDTOFOLLOWINGCHANCE / 2:
-                self.start_symptoms()
-                return
-            elif chance < INFECTEDTOFOLLOWINGCHANCE:
-                self.start_quarantine()
+            if chance < INFECTEDTOFOLLOWINGCHANCE:
+                if QUARANTINE:
+                    self.start_quarantine()
+                else:
+                    self.start_symptoms()
                 return
             if self.timer == 0:
                 self.state = State.RECOVERED
@@ -203,5 +204,5 @@ if __name__ == '__main__':
     plt.ylabel('Number of persons')
     plt.grid()
     plt.legend(loc='upper right')
-    plt.savefig('Pandemic{num_people}people{initial}socialdistance{sd}initial.png'
-                .format(num_people=NUMPEOPLE, initial=INITIALINFECTED, sd=SOCIALDISTANCING))
+    plt.savefig('Pandemic{num_people}people{initial}initial_socialdistance_is_{sd}_quarantine_is_{quarantine}.png'
+                .format(num_people=NUMPEOPLE, initial=INITIALINFECTED, sd=SOCIALDISTANCING, quarantine=QUARANTINE))
